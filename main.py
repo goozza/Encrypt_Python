@@ -133,7 +133,7 @@ def decrypt_aes_gcm(key: bytes, nonce: bytes, ciphertext: bytes):
 async def get_public_key(request: Request):
     # token = request.cookies.get("access_token")
     # if not token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    #     raise HTTPException(status_code=401, detail="Unauthorized")
     _, public_jwk = get_server_keys()
     return {"serverPublicKeyJwk": public_jwk}
 
@@ -141,7 +141,7 @@ async def get_public_key(request: Request):
 async def handle_secure_post(request: Request, handler):
     # token = request.cookies.get("access_token")
     # if not token:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    #     raise HTTPException(status_code=401, detail="Unauthorized")
 
     body = await request.json()
     client_public_jwk = body.get("clientPublicKeyJwk")
