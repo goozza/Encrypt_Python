@@ -139,9 +139,9 @@ async def get_public_key(request: Request):
 
 # ---------- Wrapper สำหรับ Secure POST ----------
 async def handle_secure_post(request: Request, handler):
-    # token = request.cookies.get("access_token")
-    # if not token:
-    #     raise HTTPException(status_code=401, detail="Unauthorized")
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
     body = await request.json()
     client_public_jwk = body.get("clientPublicKeyJwk")
@@ -192,4 +192,5 @@ async def secure_data(request: Request):
 # ---------- รัน ----------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))  # ใช้ PORT จาก env หรือ fallback 8000
+    uvicorn.run(app, host="0.0.0.0", port=port)
