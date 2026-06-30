@@ -17,11 +17,12 @@ app = FastAPI()
 # -------------------- CORS --------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # หรือระบุโดเมนจริง
-    allow_credentials=False,
+    allow_origins=["*"],   # หรือ ["*"] ตามต้องการ
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # ---------- ฟังก์ชัน Base64 (แยกตามประเภท) ----------
 def b64_std_encode(data: bytes) -> str:
     """Base64 standard (มี padding) ใช้กับ payload"""
@@ -137,17 +138,14 @@ async def get_public_key(request: Request):
 # ---------- Wrapper สำหรับ Secure POST ----------
 async def handle_secure_post(request: Request, handler):
    
-    try:
-        body = await request.json()
-    except Exception as e:
-        logger.error(f"Invalid JSON body: {e}")
-        raise HTTPException(status_code=400, detail="Invalid JSON body")
 
+    body = await request.json()
     client_public_jwk = body.get("clientPublicKeyJwk")
     payload = body.get("payload")
 
     if not client_public_jwk or not payload:
         raise HTTPException(status_code=400, detail="Missing fields")
+
     # 1. Derive shared key
     server_private, _ = get_server_keys()
     shared_key = derive_shared_key(client_public_jwk, server_private)
